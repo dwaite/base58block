@@ -30,15 +30,19 @@ block is converted to base58, with each base58 'digit' represented by a
 different character in the dictionary. The value is always represented by a
 full 11 base58 'digit' number. So for example:
 
-  Base58Block.encode "\0\0\0\0\0\0\0\0" # => "11111111"
+```ruby
+Base58Block.encode "\0\0\0\0\0\0\0\0" # => "11111111"
+```
   
 This is because the zero base58 digit is represented by the character "1" in
 the dictionary.
 
 The maximum value 64 bit number is represented in hex as 0xffffffffffffffff
 
-  Base58Block.encode(["FFFFFFFFFFFFFFFF"].pack("H*")) # => "jpXCZedGfVQ"
-  
+```ruby
+Base58Block.encode(["FFFFFFFFFFFFFFFF"].pack("H*")) # => "jpXCZedGfVQ"
+```
+
 You may need to represent the last bytes in a sequence total less than eight
 bytes. This is done rather simply - pad the highest order bytes with zero values
 before converting to an integer, convert to base58 per normal, then change the
@@ -55,13 +59,15 @@ was chosen because:
 
 To show an example:
 
-  # Convert the highest seven byte value, 0x00ffffffffffffff
-  result = Base58Block.encode(["00FFFFFFFFFFFFFF"].pack("H*")) # => "1Ahg1opVcGW"
+```ruby
+# Convert the highest seven byte value, 0x00ffffffffffffff
+result = Base58Block.encode(["00FFFFFFFFFFFFFF"].pack("H*")) # => "1Ahg1opVcGW"
+
+# Change first 'digit' to indicate we had only seven bytes input
+result[0] = DICTIONARY[43+7] # => "s"
   
-  # Change first 'digit' to indicate we had only seven bytes input
-  result[0] = DICTIONARY[43+7] # => "s"
-  
-  Base58Block.encode(["FFFFFFFFFFFFFF".pack("H*")]) == result # => true
+Base58Block.encode(["FFFFFFFFFFFFFF".pack("H*")]) == result # => true
+```
 
 Note that a partial block still results in 11 characters of output.
 
@@ -94,7 +100,9 @@ following additional rules are provided for normalization:
 2. Partial blocks must indicate between 1 and 7 bytes
 3. No additional characters (including whitespace) may appear within the encoded
    value.
-# Known issues
+   
+
+## Known issues
 
 - The current decoding algorithm will fail if whitespace or invalid characters
   are in the input value
